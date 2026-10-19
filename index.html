@@ -1096,6 +1096,7 @@ QAYDALAR
 - Layihə (mayakresidence.az): təxminən 30 ha ərazi, 21 ha park (14 ha qapalı, 7 ha açıq), 10 000 ağac; Xəzər dənizi və Zığ gölü mənzərəsi. H. Aslanov metrosu 10 dəq, Ağ şəhər 11 dəq, hava limanı 15 dəq, şəhər mərkəzi 12 dəq; Bakı 2040 planına görə metro Zığa uzadılacaq. Memarlıq: Kreatif Mimarlık (Türkiyə), Yeşil Vadi Mimarlık, German Landscape Studio. Tikinti: Cellubor səs izolyasiyası, daş yun istilik izolyasiyası, keramoqranit fasad, alüminium/PVC pəncərə, Kone (Finlandiya) lift. Təhlükəsizlik: 7/24 mühafizə, giriş nəzarəti, kameralar. Geniş yeraltı avtodayanacaq (yer sayı və qiyməti bazada yoxdur). Uşaq bağçası, məktəb, fitnes-spa, açıq və qapalı hovuzlar, futbol, voleybol, tennis, qolf, 5 km qaçış və velosiped zolağı, kafe-restoranlar. Lightwell: 8 blok, 2.4 ha qapalı park, konsyerj, uşaq meydançası, dekorativ hovuzlar. Satış ofisi: Hətəm Allahverdiyev küçəsi 78.
 - Blok 30 (Lightwell, həyətin şimalı, təmirsiz): 14 mərtəbə, 83 mənzil, planlar var, QİYMƏT VƏ STATUS YOXDUR. Siyahı aşağıda (BLOK 30). Blok 30-u modeldə göstərmək mümkün deyil. Digər blokların qiymətləri bazada yoxdur.
 - Sıra sayı şəkilçisinə diqqət et: 1-ci, 2-ci, 3-cü, 4-cü, 5-ci, 6-cı, 7-ci, 8-ci, 9-cu, 10-cu, 11-ci, 12-ci, 13-cü, 14-cü mərtəbə.
+- Yalnız soruşulan mövzuya cavab ver: "hamamda nə var" sualına yalnız hamam materiallarını de, bütün siyahını yox.
 - Cavabı Azərbaycan dilində, qısa və rəsmi yaz. Uzun tire (—) işlətmə. Mənzil kodunu 26-8-3 formatında yaz. Siyahı ən çox 8 sətir olsun; çox mənzil varsa sayını de və "vurgula" ilə modeldə göstər.
 - Tək mənzildən danışanda "menzil_goster" ilə onu modeldə göstər. Bir neçə mənzili sadalayanda "vurgula" işlət. Günəş sualında "gunes_qur" (konkret an) və ya "gunes_saatlari" (gün ərzində saat sayı) işlət. "İçəri gir" istənsə "iceri_gir" işlət. Plan, otaqlar və ya mənzilin içi soruşulanda "plan_goster" ilə real planı aç. Rəng rejimi lazım olsa "rejim" işlət.
 
@@ -1219,9 +1220,26 @@ function localAnswer(raw){
   // General facts
   if (/təhvil|nə vaxt hazır|nə vaxt bit/.test(q)) return "Gözlənilən təhvil: **2027-ci ilin payızı**. Bina hazırda tikinti mərhələsindədir.";
   if (/ipoteka|kredit|ödəniş|nağd|ilkin ödəniş|faiz/.test(q)) return "Ödəniş üsulları: **ipoteka, nağd və daxili kredit**. İlkin ödəniş, müddət və faiz şərtləri satış menecerindədir: *4554, WhatsApp +994 10 333 45 54.";
+  // Topic answers for renovation and building materials: each question gets only the matching topics
+  const TOPICS = [
+    {re: /hamam|vanna|sanitar|tualet|unitaz|smesitel|kran|duş|santexnika|lavabo|rakovina/, t: "**Hamam və sanitar qovşaq:** Geberit (İsveçrə) gizli çənli asma unitaz və düymə paneli; Hansgrohe (Almaniya) smesitellər, duş dəsti və tropik duş; divar və döşəmə keramikası Baldocer (İspaniya), 120×60 sm, mərmər və daş görünüşlü açıq tonlar. Sanitar qovşaq sayı mənzilə görə 1 və ya 2-dir."},
+    {re: /döşəmə|laminat|parket|pol\b/, t: "**Döşəmə:** otaqlarda Kastamonu laminat (Türkiyə), 192×1285×8 mm, tünd palıd rəngi. Hamam və eyvanda Baldocer keramikası (İspaniya, 120×60 sm)."},
+    {re: /divar kağız|oboy|divarlar|divara|rəng|boya/, t: "**Divarlar:** otaqlarda Parato divar kağızı (İtaliya), kolleksiya kodları 42260, 42265, 42272: ağ, açıq bej və yaşılımtıl bej tonlar. Hamamda Baldocer keramikası."},
+    {re: /qapı/, t: "**Qapılar:** daxili qapılar sifarişlə Azərbaycanda hazırlanır (açıq boz-bej, gizli çərçivəli üslub); mənzilin giriş qapısı sifarişlə Türkiyədə hazırlanır."},
+    {re: /açar|rozetka|elektrik|işıq açar/, t: "**Elektrik:** Bticino Classia açar və rozetkaları (İtaliya), krem rəngli çərçivə. Kabellər Göknur (Azərbaycan)."},
+    {re: /eyvan|balkon|lociya/, t: "**Eyvan:** döşəmə və divarlarda Baldocer keramikası (İspaniya, 120×60 sm); bütün standart mənzillərdə eyvan var."},
+    {re: /kafel|plitə|keramika/, t: "**Keramika:** hamam, eyvan və bina dəhlizlərində Baldocer (İspaniya), 120×60 sm; fasadda Florim (İtaliya), 320×120 sm böyük plitələr."},
+    {re: /lift/, t: "**Liftlər:** Blok 26-da 2 lift var, Kone (Finlandiya), güzgü və paslanmayan polad kabina."},
+    {re: /fasad/, t: "**Fasad:** Florim keramikası (İtaliya), 320×120 sm; kərpic və beton tonlarında."},
+    {re: /izolyasiya|səs|istilik izol/, t: "**İzolyasiya:** mənzillərarası divarlarda Cellubor səs izolyasiyası (Türkiyə), daş yun istilik izolyasiyası."},
+    {re: /pəncərə/, t: "**Pəncərələr:** alüminium/PVC profillər."},
+    {re: /boru|tesisat|kanalizasiya/, t: "**Tesisat:** su və kanalizasiya boruları Fıratboru (Türkiyə), elektrik kabelləri Göknur (Azərbaycan), səs izolyasiyası Cellubor (Türkiyə)."},
+    {re: /kombi|kondisioner|isitmə|mətbəx|mebel|texnika|çilçıraq|işıqlandırma/, t: "**Kombi, kondisioner, mətbəx mebeli, işıqlandırma:** təmir spesifikasiyasında göstərilmir; renderlərdəki mebel dizayn nümunəsidir. Satış menecerindən dəqiqləşdirin: *4554."},
+  ];
   if (/ağ təmir/.test(q)) return "\"Ağ təmirli\" mənzillərdə təhvil zamanı: arakəsmə hörgüsü, maşın suvağı, su, kanalizasiya, istilik və elektrik xətləri, styajka, divar kağızına hazır malyar işləri, paduqa və pərdəliklər. Sanitar qovşaqda qara suvaq və xətlər çəkilir (styajka daxil deyil). Eyvanlar tam təmir olunur. Kombi qoyulmur.\nBlok 26 isə **tam təmirli** satılır.";
-  if (/kombi|kondisioner|mətbəx mebel|mebel/.test(q)) return "Təmir spesifikasiyasında kombi, kondisioner və mətbəx mebeli göstərilmir; renderlərdəki mebel dizayn nümunəsidir. Bunları satış menecerindən dəqiqləşdirin: *4554.";
-  if (/təmir|laminat|parket|döşəmə|divar kağız|oboy|santexnika|unitaz|smesitel|kafel|plitə|keramika|qapı|rozetka|açar|brend|material/.test(q)) return "Blok 26 **tam təmirli** satılır. Materiallar (Kreatif Mimarlık spesifikasiyası, 15.09.2026):\n- Döşəmə: Kastamonu laminat, Türkiyə (192×1285×8 mm, tünd palıd)\n- Divarlar: Parato divar kağızı, İtaliya\n- Hamam, eyvan keramikası: Baldocer, İspaniya (120×60 sm)\n- Santexnika: Geberit (İsveçrə, gizli çənli unitaz), Hansgrohe (Almaniya, smesitel və duş)\n- Elektrik açarları: Bticino Classia, İtaliya\n- Qapılar: daxili qapılar sifarişlə (Azərbaycan), giriş qapısı sifarişlə (Türkiyə)\n- Tesisat: Göknur, Cellubor, Fıratboru; lift: Kone (Finlandiya); fasad: Florim keramikası (İtaliya)\nKombi, kondisioner və mətbəx mebeli barədə satış menecerindən dəqiqləşdirin.";
+  const hits = TOPICS.filter(x => x.re.test(q));
+  if (hits.length && !/neçə lift/.test(q)) return hits.map(x => x.t).join("\n") + (hits.length < 3 ? "\nMənbə: Kreatif Mimarlık təmir spesifikasiyası, 15.09.2026." : "");
+  if (/təmir|material|brend|marka/.test(q)) return "Blok 26 **tam təmirli** satılır. Materiallar (Kreatif Mimarlık spesifikasiyası, 15.09.2026):\n- Döşəmə: Kastamonu laminat, Türkiyə (192×1285×8 mm, tünd palıd)\n- Divarlar: Parato divar kağızı, İtaliya\n- Hamam, eyvan keramikası: Baldocer, İspaniya (120×60 sm)\n- Santexnika: Geberit (İsveçrə), Hansgrohe (Almaniya)\n- Elektrik açarları: Bticino Classia, İtaliya\n- Qapılar: daxili Azərbaycan, giriş Türkiyə (sifarişlə)\n- Lift: Kone (Finlandiya); fasad: Florim (İtaliya)\nKonkret element barədə soruşa bilərsiniz, məsələn \"hamamda nə var?\".";
   if (/harada|yerləş|ünvan|massiv|qonşu/.test(q)) return "Blok 26 Mayak Residence-in **Lightwell** massivindədir (Blok 24–31), cənub sırasında. Qərbində Blok 25, şərqində Blok 27/28, şimalında həyət və hovuz, cənubunda park və Zığ şossesi, ondan sonra dəniz. Günəş Blok 27 tərəfdən çıxır, Blok 25 tərəfdə batır.";
   if (/blok\s*30|30-?\s*cu blok/.test(q)){
     const n = (q.match(/(\d)\s*otaq/) || [])[1];
@@ -1233,11 +1251,10 @@ function localAnswer(raw){
   if (/məktəb|bağça\b|uşaq bağçası|infrastruktur|hovuz|idman|fitnes/.test(q)) return "Layihədə uşaq bağçası, məktəb, fitnes-spa, açıq və qapalı hovuzlar, futbol, voleybol, tennis, qolf meydançaları, 5 km qaçış və velosiped zolağı, kafe-restoranlar var. Lightwell-də 2.4 ha qapalı park, uşaq meydançası, dekorativ hovuzlar və konsyerj xidməti var.";
   if (/metro|aeroport|hava liman|məsafə|mərkəz|uzaq/.test(q)) return "Məsafələr: H. Aslanov metrosu 10 dəq, Ağ şəhər 11 dəq, hava limanı 15 dəq, şəhər mərkəzi 12 dəq. Bakı 2040 baş planına görə metronun qırmızı xətti Zığa qədər uzadılacaq.";
   if (/təhlükəsiz|mühafizə|kamera/.test(q)) return "Təhlükəsizlik: 7/24 mühafizə, giriş-çıxış nəzarəti və kameralar.";
-  if (/lift|material|izolyasiya|fasad|pəncərə/.test(q) && !/neçə lift/.test(q)) return "Blok 26-da 2 lift var, liftlər Kone (Finlandiya). Tikinti: mənzillərarası divarda Cellubor səs izolyasiyası, daş yun istilik izolyasiyası, keramoqranit fasad, alüminium/PVC pəncərələr.";
   if (/bağçalı|\bbm\b/.test(q)) return "1-ci mərtəbə mənzilləri **bağçalıdır** (şəxsi bağça). Satış cədvəlindəki \"BM\" yüksək ehtimalla \"bağçalı mənzil\" deməkdir. Daxili sahələr 47.0–115.2 m²-dir; qiymət satış cədvəlində göstərilmir, menecerdən dəqiqləşdirin.";
   const roomM = q.match(/(\d)\s*-?\s*otaq/);
   if (/otaq/.test(q) && !roomM) return "Otaq sayları (plan): M-1 82.8 və M-2 81.8 m² 3 otaqlı; M-3 54.5, M-4 51.8, M-6 53.3 m² 2 otaqlı; M-5 117.8 m² 4 otaqlı. Terraslı 26-13-4 4 otaqlı, 26-14-3 2 otaqlı. 1-ci mərtəbədə bağçalı 2, 3 və 4 otaqlı mənzillər var.";
-  if (/neçə mənzil|mənzil sayı|neçə mərtəbə|lift/.test(q)) return "Blok 26: **14 mərtəbə, 79 mənzil, 2 lift**. 1–12-ci mərtəbələrdə 6, 13-cüdə 4, 14-cüdə 3 mənzil; 2 terraslı mənzil (26-13-4, 232.1 m² və 26-14-3, 104.7 m²).";
+  if (/neçə mənzil|mənzil sayı|neçə mərtəbə|lift/.test(q)) return "Blok 26: **14 mərtəbə, 79 mənzil, 2 lift**. 1–12-ci mərtəbələrdə 6, 13-cüdə 4, 14-cüdə 3 mənzil; 2 terraslı mənzil (26-13-4: 4 otaqlı, daxili 180.1 m²; 26-14-3: 2 otaqlı, daxili 83.1 m²).";
 
   // Filters
   const avail = UNITS.filter(x => x.status === "satılır");
