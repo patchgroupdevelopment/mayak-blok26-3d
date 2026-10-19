@@ -1222,7 +1222,7 @@ function localAnswer(raw){
   if (/ipoteka|kredit|ödəniş|nağd|ilkin ödəniş|faiz/.test(q)) return "Ödəniş üsulları: **ipoteka, nağd və daxili kredit**. İlkin ödəniş, müddət və faiz şərtləri satış menecerindədir: *4554, WhatsApp +994 10 333 45 54.";
   // Topic answers for renovation and building materials: each question gets only the matching topics
   const TOPICS = [
-    {re: /hamam|vanna|sanitar|tualet|unitaz|smesitel|kran|duş|santexnika|lavabo|rakovina|aksesuar/, t: "**Hamam və sanitar qovşaq:** Geberit (İsveçrə) gizli çənli asma unitaz və düymə paneli; Hansgrohe (Almaniya) smesitellər, duş dəsti və tropik duş; divar və döşəmə keramikası Baldocer (İspaniya), 120×60 sm, mərmər və daş görünüşlü açıq tonlar. Sanitar qovşaq sayı mənzilə görə 1 və ya 2-dir."},
+    {re: /hamam|vanna|sanitar|tualet|unitaz|smesitel|kran|duş|santexnika|lavabo|rakovina/, t: "**Hamam və sanitar qovşaq:** Geberit (İsveçrə) gizli çənli asma unitaz və düymə paneli; Hansgrohe (Almaniya) smesitellər, duş dəsti və tropik duş; divar və döşəmə keramikası Baldocer (İspaniya), 120×60 sm, mərmər və daş görünüşlü açıq tonlar. Sanitar qovşaq sayı mənzilə görə 1 və ya 2-dir."},
     {re: /döşəmə|laminat|parket|pol\b/, t: "**Döşəmə:** otaqlarda Kastamonu laminat (Türkiyə), 192×1285×8 mm, tünd palıd rəngi. Hamam və eyvanda Baldocer keramikası (İspaniya, 120×60 sm)."},
     {re: /divar kağız|oboy|divarlar|divara|rəng|boya/, t: "**Divarlar:** otaqlarda Parato divar kağızı (İtaliya), kolleksiya kodları 42260, 42265, 42272: ağ, açıq bej və yaşılımtıl bej tonlar. Hamamda Baldocer keramikası."},
     {re: /qapı/, t: "**Qapılar:** daxili qapılar sifarişlə Azərbaycanda hazırlanır (açıq boz-bej, gizli çərçivəli üslub); mənzilin giriş qapısı sifarişlə Türkiyədə hazırlanır."},
@@ -1238,7 +1238,8 @@ function localAnswer(raw){
     {re: /kombi|kondisioner|isitmə|mebel|texnika|çilçıraq|işıqlandırma/, t: "**Kombi, kondisioner, mətbəx mebeli, işıqlandırma:** təmir spesifikasiyasında göstərilmir; renderlərdəki mebel dizayn nümunəsidir. Satış menecerindən dəqiqləşdirin: *4554."},
   ];
   if (/ağ təmir/.test(q)) return "\"Ağ təmirli\" mənzillərdə təhvil zamanı: arakəsmə hörgüsü, maşın suvağı, su, kanalizasiya, istilik və elektrik xətləri, styajka, divar kağızına hazır malyar işləri, paduqa və pərdəliklər. Sanitar qovşaqda qara suvaq və xətlər çəkilir (styajka daxil deyil). Eyvanlar tam təmir olunur. Kombi qoyulmur.\nBlok 26 isə **tam təmirli** satılır.";
-  const hits = TOPICS.filter(x => x.re.test(q));
+  let hits = TOPICS.filter(x => x.re.test(q));
+  if (!hits.length && /aksesuar/.test(q)) hits = [TOPICS[0]];
   if (hits.length && !/neçə lift/.test(q)) return hits.map(x => x.t).join("\n") + (hits.length < 3 ? "\nMənbə: Kreatif Mimarlık təmir spesifikasiyası, 15.09.2026." : "");
   if (/təmir|material|brend|marka/.test(q)) return "Blok 26 **tam təmirli** satılır. Materiallar (Kreatif Mimarlık spesifikasiyası, 15.09.2026):\n- Döşəmə: Kastamonu laminat, Türkiyə (192×1285×8 mm, tünd palıd)\n- Divarlar: Parato divar kağızı, İtaliya\n- Hamam, eyvan keramikası: Baldocer, İspaniya (120×60 sm)\n- Santexnika: Geberit (İsveçrə), Hansgrohe (Almaniya)\n- Elektrik açarları: Bticino Classia, İtaliya\n- Qapılar: daxili Azərbaycan, giriş Türkiyə (sifarişlə)\n- Lift: Kone (Finlandiya); fasad: Florim (İtaliya)\nKonkret element barədə soruşa bilərsiniz, məsələn \"hamamda nə var?\".";
   if (/harada|yerləş|ünvan|massiv|qonşu/.test(q)) return "Blok 26 Mayak Residence-in **Lightwell** massivindədir (Blok 24–31), cənub sırasında. Qərbində Blok 25, şərqində Blok 27/28, şimalında həyət və hovuz, cənubunda park və Zığ şossesi, ondan sonra dəniz. Günəş Blok 27 tərəfdən çıxır, Blok 25 tərəfdə batır.";
