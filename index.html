@@ -272,6 +272,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stro
     <button>26-8-3 neçəyədir?</button>
     <button>26-10-6-ya 21 dekabrda neçə saat günəş düşür?</button>
     <button>3 otaqlı satışda nə var?</button>
+    <button>Təmirə nələr daxildir?</button>
     <button>26-12-4-ün içinə gir</button>
   </div>
   <form class="composer" id="composer">
@@ -848,7 +849,7 @@ function selectUnit(u, {fly: doFly = true} = {}){
       <dt>Otaqlar</dt><dd>${rooms}</dd>
       <dt>Günəş tərəfi</dt><dd>${dir}</dd>
       <dt>Dəniz/göl</dt><dd>${u.tip === "terraslı" ? "məlum deyil" : u.deniz ? "bəli (ilkin)" : "xeyr (ilkin)"}</dd>
-      <dt>Təmir</dt><dd>təmirli</dd>
+      <dt>Təmir</dt><dd>təmirli · <button class="unitlink" data-temir>materiallar</button></dd>
       <dt>Status tarixi</dt><dd>${DATA_DATE}</dd>
     </dl>
     ${u.qeyd ? `<p class="note">${u.qeyd}</p>` : ""}
@@ -861,6 +862,7 @@ function selectUnit(u, {fly: doFly = true} = {}){
     </div>`;
   card.hidden = false;
   card.querySelector("[data-close]").onclick = () => selectUnit(null);
+  card.querySelector("[data-temir]").onclick = () => ask("Təmirə nələr daxildir?");
   card.querySelector("[data-enter]").onclick = () => enterUnit(u);
   card.querySelector("[data-sun]").onclick = () => showSunHours(u);
   if (hasPlan) card.querySelector("[data-plan]").onclick = () => showPlan(u);
@@ -1079,14 +1081,16 @@ function rules(){
   return `Sənin adın Melissa-dır. Mayak Residence layihəsinin Blok 26 binası üzrə satış asistentisən. Sayt səhifəsində solda binanın 3D modeli var; aşağıdakı alətlərlə onu idarə edə bilərsən.
 
 QAYDALAR
-- Yalnız aşağıdakı məlumata əsaslan. Bazada olmayanı (təmirin tərkibi, ipoteka faizi və müddəti, endirim, aylıq ödəniş, kommunal xərc) uydurma: "bu məlumat hələ bazada yoxdur" de və satış menecerinə yönləndir (*4554, WhatsApp +994 10 333 45 54).
+- Yalnız aşağıdakı məlumata əsaslan. Bazada olmayanı (kombi, kondisioner, mətbəx mebeli, ipoteka faizi və müddəti, endirim, aylıq ödəniş, kommunal xərc) uydurma: "bu məlumat hələ bazada yoxdur" de və satış menecerinə yönləndir (*4554, WhatsApp +994 10 333 45 54).
 - Qiymət AZN/m²-dir. Ümumi qiymət = AZN/m² × tip sahəsi və həmişə "təxminən" deyilir; endirim və ödəniş şərtləri daxil deyil. Hesablama lazım olsa dəqiq hesabla.
 - Status ${DATA_DATE} vəziyyətinədir. "satılmır" mənzili təklif etmə; soruşulsa "hazırda satışda deyil" de və oxşar, satışda olan variant təklif et. "Bron" sözünü işlətmə.
 - Otaq sayı mənzil planlarından götürülüb ("otaqlı" = yataq otaqları + qonaq otağı): M-1 82.8 və M-2 81.8 m² 3 otaqlı (2 yataq, 2 sanitar qovşaq); M-3 54.5, M-4 51.8, M-6 53.3 m² 2 otaqlı (1 yataq, 1 SQ); M-5 117.8 m² 4 otaqlı (3 yataq, 2 SQ). Hamısında eyvan var. Mənzil kartında "Plan" düyməsi real planı göstərir.
 - 1-ci mərtəbə mənzilləri bağçalıdır (şəxsi bağça). Satış ekranında qiymət yerinə "BM" yazılıb, yüksək ehtimalla "bağçalı mənzil" deməkdir (rəsmi təsdiq gözlənilir). Ekrandakı sahə (165.8, 256 m² və s.) ehtimal ki bağçanı da daxil edir; daxili sahə planda 47.0–115.2 m²-dir. Qiyməti menecerdən soruşmağı tövsiyə et.
 - Terraslı 26-13-4: daxili 180.1 m², 4 otaqlı, uzun terraslı (ekranda 232.1 m², terras daxil ehtimal). 26-14-3: daxili 83.1 m², 2 otaqlı, terras + eyvan (ekranda 104.7 m²). Qiymətləri ekranda göstərilmir. 26-9-2 satışdadır, qiyməti göstərilmir.
 - Dəniz/göl mənzərəsi ilkin məlumatdır: "ilkin məlumata görə" de. 3D modeldəki mənzil planları sxematikdir, qonşu binaların hündürlüyü təxminidir. Günəş hesablamaları baş plana və sxematik modelə əsaslanır, bunu qısa qeyd et.
-- Blok 26 TƏMİRLİ satılır (baş plandakı siyahı: təmirli bloklar 1, 2, 24, 25, 26, 31, 32; təmirsiz 3, 4, 5, 6, 27, 28, 29, 30, 34, 43, 44, 45). Təmirin tərkibi bazada yoxdur.
+- Blok 26 TƏMİRLİ satılır (baş plandakı siyahı: təmirli bloklar 1, 2, 24, 25, 26, 31, 32; təmirsiz 3, 4, 5, 6, 27, 28, 29, 30, 34, 43, 44, 45).
+- Təmir materialları (Kreatif Mimarlık spesifikasiyası, 15.09.2026): döşəmə Kastamonu laminat (Türkiyə, 192×1285×8 mm, tünd palıd); otaq divarları Parato divar kağızı (İtaliya, açıq tonlar); hamam, eyvan və bina dəhlizi keramikası Baldocer (İspaniya, 120×60 sm, mərmər/daş görünüşlü); santexnika Geberit (İsveçrə, gizli çənli unitaz) və Hansgrohe (Almaniya, smesitel, duş); elektrik açarları Bticino Classia, Cream Satin (İtaliya); daxili qapılar sifarişlə Azərbaycanda, giriş qapısı sifarişlə Türkiyədə; tesisat Göknur (Azərbaycan), Cellubor səs izolyasiyası və Fıratboru boruları (Türkiyə); lift Kone (Finlandiya); fasad keramikası Florim (İtaliya, 320×120 sm). Renderlərdəki mebel və mətbəx dizayn nümunəsidir, paketə daxil olduğu göstərilmir; kombi, kondisioner, mətbəx mebeli barədə məlumat yoxdur, menecerdən soruşmağı tövsiyə et.
+- "Ağ təmirli" paket (başqa bloklar üçün, hansılar olduğu təsdiqlənməyib): arakəsmə hörgüsü, maşın suvağı, su, kanalizasiya, istilik və elektrik xətləri, styajka, divar kağızına hazır malyar işləri, paduqa və pərdəliklər; sanitar qovşaqda qara suvaq və xətlər (styajka daxil deyil); eyvanlar tam təmir olunur; kombi qoyulmur.
 - Yerləşmə (nömrəli baş plan): Blok 26 Lightwell massivinin cənub sırasındadır. Qərbində Blok 25, şərqində Blok 27/28, şimalında həyət və hovuz, onun arxasında Blok 30. Cənubunda park və Zığ şossesi, ondan sonra dəniz. Günəş Blok 27 tərəfdən çıxır (M-2, M-3, M-4 tərəfi), Blok 25 tərəfdə batır (M-1, M-6 tərəfi); M-5 şimal ucdadır və hər iki tərəfə baxır.
 - Ümumi: 14 mərtəbə, 79 mənzil, 2 lift. Lightwell massivi (Blok 24–31), layihədə 59 bina. Gözlənilən təhvil 2027-ci ilin payızı. Ödəniş üsulları: ipoteka, nağd, daxili kredit (şərtlər menecerdədir).
 - Layihə (mayakresidence.az): təxminən 30 ha ərazi, 21 ha park (14 ha qapalı, 7 ha açıq), 10 000 ağac; Xəzər dənizi və Zığ gölü mənzərəsi. H. Aslanov metrosu 10 dəq, Ağ şəhər 11 dəq, hava limanı 15 dəq, şəhər mərkəzi 12 dəq; Bakı 2040 planına görə metro Zığa uzadılacaq. Memarlıq: Kreatif Mimarlık (Türkiyə), Yeşil Vadi Mimarlık, German Landscape Studio. Tikinti: Cellubor səs izolyasiyası, daş yun istilik izolyasiyası, keramoqranit fasad, alüminium/PVC pəncərə, Kone (Finlandiya) lift. Təhlükəsizlik: 7/24 mühafizə, giriş nəzarəti, kameralar. Geniş yeraltı avtodayanacaq (yer sayı və qiyməti bazada yoxdur). Uşaq bağçası, məktəb, fitnes-spa, açıq və qapalı hovuzlar, futbol, voleybol, tennis, qolf, 5 km qaçış və velosiped zolağı, kafe-restoranlar. Lightwell: 8 blok, 2.4 ha qapalı park, konsyerj, uşaq meydançası, dekorativ hovuzlar. Satış ofisi: Hətəm Allahverdiyev küçəsi 78.
@@ -1215,7 +1219,9 @@ function localAnswer(raw){
   // General facts
   if (/təhvil|nə vaxt hazır|nə vaxt bit/.test(q)) return "Gözlənilən təhvil: **2027-ci ilin payızı**. Bina hazırda tikinti mərhələsindədir.";
   if (/ipoteka|kredit|ödəniş|nağd|ilkin ödəniş|faiz/.test(q)) return "Ödəniş üsulları: **ipoteka, nağd və daxili kredit**. İlkin ödəniş, müddət və faiz şərtləri satış menecerindədir: *4554, WhatsApp +994 10 333 45 54.";
-  if (/təmir/.test(q)) return "Blok 26 **təmirli** satılan bloklar siyahısındadır (baş plan: təmirli 1, 2, 24, 25, 26, 31, 32). Təmirin tərkibini satış menecerindən dəqiqləşdirin.";
+  if (/ağ təmir/.test(q)) return "\"Ağ təmirli\" mənzillərdə təhvil zamanı: arakəsmə hörgüsü, maşın suvağı, su, kanalizasiya, istilik və elektrik xətləri, styajka, divar kağızına hazır malyar işləri, paduqa və pərdəliklər. Sanitar qovşaqda qara suvaq və xətlər çəkilir (styajka daxil deyil). Eyvanlar tam təmir olunur. Kombi qoyulmur.\nBlok 26 isə **tam təmirli** satılır.";
+  if (/kombi|kondisioner|mətbəx mebel|mebel/.test(q)) return "Təmir spesifikasiyasında kombi, kondisioner və mətbəx mebeli göstərilmir; renderlərdəki mebel dizayn nümunəsidir. Bunları satış menecerindən dəqiqləşdirin: *4554.";
+  if (/təmir|laminat|parket|döşəmə|divar kağız|oboy|santexnika|unitaz|smesitel|kafel|plitə|keramika|qapı|rozetka|açar|brend|material/.test(q)) return "Blok 26 **tam təmirli** satılır. Materiallar (Kreatif Mimarlık spesifikasiyası, 15.09.2026):\n- Döşəmə: Kastamonu laminat, Türkiyə (192×1285×8 mm, tünd palıd)\n- Divarlar: Parato divar kağızı, İtaliya\n- Hamam, eyvan keramikası: Baldocer, İspaniya (120×60 sm)\n- Santexnika: Geberit (İsveçrə, gizli çənli unitaz), Hansgrohe (Almaniya, smesitel və duş)\n- Elektrik açarları: Bticino Classia, İtaliya\n- Qapılar: daxili qapılar sifarişlə (Azərbaycan), giriş qapısı sifarişlə (Türkiyə)\n- Tesisat: Göknur, Cellubor, Fıratboru; lift: Kone (Finlandiya); fasad: Florim keramikası (İtaliya)\nKombi, kondisioner və mətbəx mebeli barədə satış menecerindən dəqiqləşdirin.";
   if (/harada|yerləş|ünvan|massiv|qonşu/.test(q)) return "Blok 26 Mayak Residence-in **Lightwell** massivindədir (Blok 24–31), cənub sırasında. Qərbində Blok 25, şərqində Blok 27/28, şimalında həyət və hovuz, cənubunda park və Zığ şossesi, ondan sonra dəniz. Günəş Blok 27 tərəfdən çıxır, Blok 25 tərəfdə batır.";
   if (/blok\s*30|30-?\s*cu blok/.test(q)){
     const n = (q.match(/(\d)\s*otaq/) || [])[1];
